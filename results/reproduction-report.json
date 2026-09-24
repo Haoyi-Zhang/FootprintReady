@@ -1,0 +1,119 @@
+{
+  "commands": [
+    {
+      "command": [
+        "python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests",
+        "-v"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 1.1206401230001575
+    },
+    {
+      "command": [
+        "python",
+        "verify_bibliography.py"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 0.668254688000161
+    },
+    {
+      "command": [
+        "python",
+        "freeze_inputs.py",
+        "--check"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 0.7697956389997671
+    },
+    {
+      "command": [
+        "python",
+        "pilot.py",
+        "--out",
+        "<fresh-output>"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 0.8203009860003476
+    },
+    {
+      "command": [
+        "python",
+        "run.py",
+        "--out",
+        "<fresh-output>",
+        "--start",
+        "0",
+        "--stop",
+        "64"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 0.9206746899999416
+    },
+    {
+      "command": [
+        "python",
+        "run.py",
+        "--out",
+        "<fresh-output>",
+        "--start",
+        "64",
+        "--stop",
+        "166"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 1.373676634000276
+    },
+    {
+      "command": [
+        "python",
+        "summarize.py",
+        "--out",
+        "<fresh-output>"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 1.627737844999956
+    },
+    {
+      "command": [
+        "python",
+        "exhaustive_audit.py",
+        "--out",
+        "<fresh-output>/exhaustive-audit.json"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 5.487255484000343
+    }
+  ],
+  "deterministic_results_equal": true,
+  "compared_result_files": [
+    "chunk-0-64.json",
+    "chunk-64-166.json",
+    "summary.json",
+    "mutations.json",
+    "abstraction-ablation.json",
+    "semantic-differential.json",
+    "exhaustive-audit.json",
+    "pilot.json",
+    "family-costs.csv",
+    "interval-costs.csv",
+    "schedule-costs.csv",
+    "abstraction-ablation.csv",
+    "footprint-costs.csv",
+    "boundary-flush-certificate.json",
+    "boundary-retain-certificate.json",
+    "pilot-fork-join-certificate.json",
+    "schedule-4-1-40-certificate.json",
+    "footprint-identity-certificate.json"
+  ],
+  "compared_certificates": 166,
+  "workers": 1,
+  "child_cpu_seconds": 15.588462,
+  "child_peak_rss_kib": 175268,
+  "wall_seconds": 12.816291405999891,
+  "timing_policy": "CPU, wall-time, and RSS fields are observational and excluded from equality; all scientific fields and certificate objects are compared"
+}
