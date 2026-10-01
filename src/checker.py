@@ -146,7 +146,7 @@ class Semantics:
             all(type(value) is list and len(value) == 2 and
                 all(is_int(endpoint, 0, 10**9) for endpoint in value) and
                 value[0] <= value[1] for value in self.bounds.values()),
-            "intervals",
+            "interval endpoints must be ordered nonnegative integers",
         )
 
     @lru_cache(maxsize=None)

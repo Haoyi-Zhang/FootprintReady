@@ -118,7 +118,7 @@ class Model:
         if any(not isinstance(b, list) or len(b) != 2 or
                not all(integer(v, 0, 10**9) for v in b) or b[0] > b[1]
                for b in bounds.values()):
-            raise InvalidModel("interval bounds")
+            raise InvalidModel("interval bounds must be ordered nonnegative integers")
         self.capacity, self.retain, self.bounds = caps, retain, bounds
         self.footprint = footprint
 

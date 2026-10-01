@@ -2,7 +2,10 @@
 
 ``solve_fixed_order`` computes the exact optimum when node execution is restricted
 to the supplied topological list.  ``solve_sealed`` permits any ready order but
-forces an empty, home-backed scratchpad between node executions.
+forces an empty, home-backed scratchpad between node executions.  The latter is an
+exact implementation only for instances with at most two modes; larger instances
+are rejected because a cheap indirect configuration route can beat the direct edge
+used by the macro dynamic program.
 """
 from __future__ import annotations
 
@@ -60,8 +63,12 @@ def solve_fixed_order(obj):
 
 
 def solve_sealed(obj):
-    """Exact dynamic program for the home-sealed boundary policy."""
+    """Exact dynamic program for the two-mode home-sealed boundary policy."""
     model = Model(obj)
+    if model.modes > 2:
+        raise ValueError(
+            "home-sealed exact baseline is established only for at most two modes"
+        )
     source = (0, 0)  # done mask, current mode; storage is empty and backed
     distance = {source: 0}
     predecessor = {}

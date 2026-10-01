@@ -32,9 +32,9 @@
   },
   "fresh_reproduction": {
     "workers": 1,
-    "child_cpu_seconds": 15.588462,
-    "child_peak_rss_kib": 175268,
-    "wall_seconds": 12.816291405999891,
+    "child_cpu_seconds": 13.804934000000001,
+    "child_peak_rss_kib": 175276,
+    "wall_seconds": 10.935702888999913,
     "deterministic_results_equal": true,
     "compared_result_files": 18,
     "compared_batch_certificates": 166,

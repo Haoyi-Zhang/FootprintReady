@@ -3,9 +3,10 @@
 This standalone repository implements the finite, footprint-aware ready-set
 machine studied in the companion internal manuscript.  It contains a certificate
 producer, a representation-distinct checker, an independent small-instance
-oracle, exact restricted-policy baselines, deterministic inputs, proofs, tests,
-and archived results.  The costs are stipulated abstract interval units; this is
-not a calibrated device-energy tool.
+oracle, restricted-policy baselines, deterministic inputs, proofs, tests,
+and archived results. The executable cost intervals have ordered nonnegative-
+integer endpoints and all certificate costs/labels are exact integers. The costs
+are stipulated abstract units; this is not a calibrated device-energy tool.
 
 ## Established model-level result
 
@@ -22,11 +23,13 @@ capacity) or destroy all residents after every dirty value has been backed.
   invariants;
 * conditional additive interval-cost composition and model-relative history
   erasure for the boundary state;
-* soundness and format completeness of feasible and infeasible certificates;
+* soundness and format completeness of feasible and infeasible certificates for
+  the declared nonnegative-integer endpoint domain;
 * preservation of these results under fixed nonuniform value footprints;
 * a two-mode ready-set normal form used by the independent oracle;
 * a sufficient mandatory-persistence writeback potential; and
-* fixed-order, home-sealed, relisting, capacity, and retention inclusion results.
+* exact fixed-order and at-most-two-mode home-sealed results, plus relisting,
+  capacity, and retention inclusion results.
 
 These are written mathematical arguments, not proof-assistant mechanizations or
 independent peer review.
@@ -75,8 +78,10 @@ Identity matters in two distinct ways.  A reachable pair with the same completed
 set, mode, resident identities, and dirty count has continuation values 22 and 30
 solely because different resident values are dirty.  A nonuniform-footprint pair
 with the same completed set, mode, resident count, and dirty count has continuation
-values 56 and 106.  Across every archived closure, the full boundary creates zero
-continuation-value conflicts.  Coarser projections create:
+values 56 and 106.  Across every archived closure, the full key creates 13,570 singleton groups, so
+its zero-conflict row is a structural grouping sanity check rather than a direct
+experimental validation of history erasure. Coarser projections genuinely merge
+states and create:
 
 | Projection | Ambiguous groups | Maximum finite spread |
 |---|---:|---:|
@@ -89,13 +94,18 @@ continuation-value conflicts.  Coarser projections create:
 | retain only resident/dirty footprint totals | 591 | 14 |
 | full boundary | 0 | 0 |
 
-These are finite non-redundancy results, not a universal minimality theorem.
+These are finite counterexamples to the stated coarse projections, not a universal
+minimality theorem. Theorem 3, rather than the singleton full-key row, establishes
+model-relative history erasure.
 
 ## Clean execution
 
-Python 3.10 or newer and the standard library are sufficient.  No installation,
-network access, GPU, model API, private data, external solver, or service is
-required.
+The tested release environment is Linux x86_64 with CPython 3.13.5. The
+top-level `verify.py`, `reproduce.py`, `run.py`, `pilot.py`, and `summarize.py`
+drivers import the Unix-only standard-library `resource` module for CPU/RSS
+observations. Other Unix/Python variants are untested and Windows is unsupported.
+No package installation, network access, GPU, model API, private data, external
+solver, or service is required.
 
 ```sh
 python -m unittest discover -s tests -v
@@ -104,7 +114,11 @@ python verify.py
 python reproduce.py --out reproduction-output
 ```
 
-`verify_bibliography.py` checks the 67-row audit for complete fields, unique keys, titles, and stable locators. `verify.py` checks all 166 archived certificates without importing the producer and also invokes that bibliography audit.
+`verify_bibliography.py` checks the 67-row audit for complete fields, unique keys,
+titles, stable locators, and pinned metadata for PipeRench, Glow, and Tiramisu. It
+is an offline consistency gate, not a substitute for the recorded first-party
+source inspection. `verify.py` checks all 166 archived certificates without
+importing the producer and also invokes that bibliography audit.
 `reproduce.py` requires a nonexistent output directory.  With one worker it:
 
 1. runs ordinary unit-test discovery;
@@ -144,11 +158,14 @@ negative control.
   and certificate checks.
 * `src/oracle.py` — non-memoized ready-node/mode/resident-subset normal-form
   enumeration.
-* `src/baseline.py` — exact fixed-list and home-sealed comparison policies.
+* `src/baseline.py` — exact fixed-list policy and an exact at-most-two-mode
+  home-sealed policy; the latter rejects larger mode sets.
 * `src/cases.py`, `freeze_inputs.py` — deterministic validation construction.
 * `exhaustive_audit.py` — complete enumeration of the declared two-node universe.
 * `tests/semantic_crosscheck.py` — all-state/all-edge differential comparison.
 * `tests/test_certificates.py` — 55 negative mutations and two metamorphisms.
+* `tests/test_declared_domains.py` — rejects half-unit endpoints and checks the
+  three-mode indirect-configuration counterexample plus home-sealed guard.
 * `inputs/` — exact consumed model objects.
 * `results/` — raw chunks, all certificates, tables, audits, and reproduction
   evidence.
@@ -159,7 +176,8 @@ negative control.
 Producer/checker ceilings are 120,000 represented states, 1,200,000 edges,
 32 MiB parsed JSON, 20 nodes, 40 value names, three modes, value footprint at most
 16, and mode capacity at most 32 units.  The oracle admits at most two modes, five
-nodes, and five million recursive visits.  A ceiling failure is an explicit limit,
+nodes, and five million recursive visits. The exact home-sealed macro baseline is
+also restricted to at most two modes. A ceiling or domain failure is explicit,
 never evidence of infeasibility.
 
 ## Scope boundary

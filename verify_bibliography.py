@@ -24,6 +24,29 @@ ALLOWED_LOCATOR_HOSTS = {
     "accelergy.mit.edu",
     "www.usenix.org",
 }
+PINNED_METADATA = {
+    "piperench": {
+        "title": "PipeRench: A Reconfigurable Architecture and Compiler",
+        "first_author_or_org": "Seth C. Goldstein",
+        "year": "2000",
+        "venue_or_record": "Computer 33(4):70-77",
+        "stable_locator_if_audited": "https://doi.org/10.1109/2.839324",
+    },
+    "glow": {
+        "title": "Glow: Graph Lowering Compiler Techniques for Neural Networks",
+        "first_author_or_org": "Nadav Rotem",
+        "year": "2018",
+        "venue_or_record": "arXiv:1805.00907",
+        "stable_locator_if_audited": "https://arxiv.org/abs/1805.00907",
+    },
+    "tiramisu": {
+        "title": "Tiramisu: A Polyhedral Compiler for Expressing Fast and Portable Code",
+        "first_author_or_org": "Riyadh Baghdadi",
+        "year": "2019",
+        "venue_or_record": "2019 IEEE/ACM International Symposium on Code Generation and Optimization (CGO), pp. 193-205",
+        "stable_locator_if_audited": "https://doi.org/10.1109/CGO.2019.8661197",
+    },
+}
 
 
 def verify() -> dict:
@@ -49,6 +72,14 @@ def verify() -> dict:
         raise ValueError("duplicate bibliography title")
     if len(set(locators)) != len(locators):
         raise ValueError("duplicate stable locator")
+
+    by_key = {row["bibtex_key"]: row for row in rows}
+    for key, expected in PINNED_METADATA.items():
+        if key not in by_key:
+            raise ValueError(f"missing pinned bibliography row: {key}")
+        for field, value in expected.items():
+            if by_key[key][field] != value:
+                raise ValueError(f"pinned metadata mismatch for {key}: {field}")
 
     for row in rows:
         if not all(row[field].strip() for field in required):
@@ -87,6 +118,8 @@ def verify() -> dict:
         ),
         "all_marked_cited": True,
         "source_bytes_redistributed": False,
+        "pinned_first_party_records": sorted(PINNED_METADATA),
+        "offline_gate_not_live_source_verification": True,
     }
 
 

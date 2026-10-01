@@ -81,13 +81,19 @@ onto `L(Q')` may discard a dirty last-use value without a store because that val
 is neither a future operand nor a required output.
 
 The event basis consists of home reads/writes, scratchpad reads/writes, operator
-kind and mode, and directed mode switches.  Each event `e` has a nonnegative
-closed interval `[l_e,u_e]`.  For path `P`, let `N_e(P)` be its event count and
+kind and mode, and directed mode switches. In the executable fragment each event
+`e` has an ordered closed interval `[l_e,u_e]` with integer endpoints
+`l_e,u_e in Z_{>=0}`. For path `P`, let `N_e(P)` be its event count and
 
     lower(P) = Σ_e N_e(P) l_e,
     upper(P) = Σ_e N_e(P) u_e.
 
 The optimization objective is minimum `upper(P)` over legal source-to-goal paths.
+The additive interval inequality can be stated over nonnegative reals, but the
+current parser, checker labels, and format-completeness proof are intentionally
+integer-valued. A one-unary-node, capacity-two, unit-footprint instance with zero
+memory charges and operator interval `[1/2,1/2]` is outside the declared executable
+domain and is rejected rather than evaluated with floating point.
 
 ## 3. Preservation and conditional cost composition
 
@@ -168,7 +174,9 @@ resource guards.  Exceeding one is an error, never an infeasibility proof.
 ## 5. Complete finite certificate format
 
 Let `G=(S,E)` be the complete source-reachable transition closure reconstructed by
-the checker.  A label is either a nonnegative integer or `dead`.  Goals must have
+the checker. Because all event endpoints are nonnegative integers, every edge
+weight is a nonnegative integer. A label is either an element of `Z_{>=0}` or
+`dead`. Goals must have
 label zero.  The checker requires every outgoing successor of every listed state
 to be listed.  For each edge `s --w--> t`:
 
@@ -215,17 +223,20 @@ source path remains inside the represented set.  A hypothetical source-to-goal
 path would therefore label
 its goal dead, contradicting the goal-zero rule. ∎
 
-**Theorem 6 (format completeness for finite instances).**  Every declared finite
-instance whose source closure fits the checker ceilings has an accepted certificate
-of exactly one status: feasible if a goal is reachable, otherwise infeasible.
+**Theorem 6 (format completeness for finite nonnegative-integer-endpoint instances).** Every
+declared finite nonnegative-integer-endpoint instance whose source closure fits the checker
+ceilings has an accepted certificate of exactly one status: feasible if a goal is
+reachable, otherwise infeasible.
 
-**Proof.** List the complete source-reachable closure.  Label each state that can
-reach a goal by its exact shortest upper distance and every other state dead.  If
+**Proof.** List the complete source-reachable closure. Nonnegative-integer edge
+weights make every finite shortest upper distance an element of `Z_{>=0}`. Label
+each state that can reach a goal by that distance and every other state dead. If
 the source is finite, choose a shortest source-to-goal path, breaking zero-cost
 ties by decreasing remaining hop count; Bellman optimality and trace replay satisfy
-the feasible schema.  If the source is dead, no goal is reachable and the dead-
-successor condition holds, satisfying the infeasible schema.  A state cannot both
-reach and fail to reach a goal, so the statuses are exclusive. ∎
+the feasible schema. If the source is dead, no goal is reachable and the dead-
+successor condition holds, satisfying the infeasible schema. A state cannot both
+reach and fail to reach a goal, so the statuses are exclusive. This proof does not
+establish completeness for arbitrary real-valued endpoints. ∎
 
 The checker need not trust the producer's shortest-path implementation.  It does,
 however, reconstruct and source-traverse the whole represented closure, so
@@ -366,9 +377,15 @@ the preceding prefix completes.  Every memory and switch action is unchanged.
 Thus each fixed-order trace is a ready-set trace; minimization over a superset
 cannot increase the value. ∎
 
-**Proposition 11 (home-sealed inclusion).**  Traces that make storage empty and
+**Proposition 11 (home-sealed inclusion).** Traces that make storage empty and
 backed between runs are a subset of ready-set traces, so the ready-set optimum is
-no larger than the home-sealed baseline.
+no larger than the home-sealed optimum. The shipped macro dynamic program computes
+that restricted optimum only for at most two modes and rejects larger instances.
+This restriction is necessary for the implementation: in the three-mode unary
+regression with zero memory/operator charges, `cfg(0,2)=10`, and
+`cfg(0,1)=cfg(1,2)=1`, a legal empty-boundary route costs 2 through mode 1 while a
+direct-only macro transition costs 10. The full primitive-action semantics and
+checker accept the cost-2 route.
 
 **Proposition 12 (topological relisting invariance).**  Relisting incomparable
 nodes while preserving each node's operands, output, operator, and mode permissions
