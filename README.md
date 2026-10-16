@@ -22,7 +22,7 @@ python -B verify_bibliography.py
 python -B freeze_inputs.py --check
 ```
 
-The current unit suite has 15 methods, including certificate mutations,
+The portable unit suite covers malformed container types as well as certificate mutations,
 metamorphisms, exact frozen-byte checks, declared-domain boundaries and selected
 trace-event regressions. These checks work on Windows as well as Unix.
 `verify_bibliography.py` checks the supplied 67-row source audit offline; it is
@@ -122,3 +122,14 @@ depth was not successfully retrieved in full.
 
 Original code and generated inputs are licensed under `LICENSE`; upstream
 literature rights remain with their owners.
+
+## Manuscript diagrams
+
+`python scripts/draw_schematics.py --out figures` generates the boundary and
+ready-order diagrams directly with Matplotlib, without TeX. Install
+`requirements-figures.txt` for this optional plotting step; the scientific
+checks above remain standard-library-only. The committed vector assets in
+`figures/` are consumed by the companion paper. To regenerate its copies, pass
+`--out ../paper/figures` from this artifact directory. Both output names are
+fixed, labels are checked against the canvas and node bounds, and fonts are
+embedded. The independent interval plot continues to read its archived CSV.

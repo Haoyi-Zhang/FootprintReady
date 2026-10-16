@@ -48,10 +48,11 @@ class Model:
         caps, retain, bounds = obj["capacity"], obj["retain"], obj["bounds"]
         if not isinstance(ins, list) or not isinstance(nodes, list) or not isinstance(outs, list):
             raise InvalidModel("graph lists")
-        if not (1 <= len(caps) <= 3 and all(integer(c, 1, 32) for c in caps)):
+        if not (type(caps) is list and 1 <= len(caps) <= 3 and
+                all(integer(c, 1, 32) for c in caps)):
             raise InvalidModel("capacities")
         self.modes = len(caps)
-        if (len(retain) != self.modes or
+        if (type(retain) is not list or len(retain) != self.modes or
                 any(not isinstance(row, list) or len(row) != self.modes or
                     any(type(v) is not bool for v in row) for row in retain)):
             raise InvalidModel("retention matrix")
@@ -84,8 +85,9 @@ class Model:
             if any(v not in names for v in args):
                 raise InvalidModel("topological dependency declaration")
             modes = node["modes"]
-            if (not isinstance(modes, list) or not modes or len(set(modes)) != len(modes) or
-                    not all(integer(m, 0, self.modes - 1) for m in modes)):
+            if (not isinstance(modes, list) or not modes or
+                    not all(integer(m, 0, self.modes - 1) for m in modes) or
+                    len(set(modes)) != len(modes)):
                 raise InvalidModel("allowed modes")
 
             deps = 0
@@ -96,7 +98,8 @@ class Model:
             names.append(out)
             producer[out] = j
 
-        if len(names) > 40 or len(set(outs)) != len(outs) or any(v not in names for v in outs):
+        if (len(names) > 40 or any(type(v) is not str or v not in names for v in outs) or
+                len(set(outs)) != len(outs)):
             raise InvalidModel("output names / model size")
         footprint = obj["footprint"]
         if (type(footprint) is not dict or set(footprint) != set(names) or
