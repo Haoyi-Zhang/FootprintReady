@@ -132,4 +132,13 @@ checks above remain standard-library-only. The committed vector assets in
 `figures/` are consumed by the companion paper. To regenerate its copies, pass
 `--out ../paper/figures` from this artifact directory. Both output names are
 fixed, labels are checked against the canvas and node bounds, and fonts are
-embedded. The independent interval plot continues to read its archived CSV.
+embedded. The interval sensitivity plot uses the same native PDF backend:
+
+```sh
+python -B scripts/draw_interval_costs.py
+python -B scripts/draw_interval_costs.py --out ../paper/figures/interval-costs.pdf
+```
+
+Its input is `results/interval-costs.csv`: the four retained radius/lower/upper
+rows are checked before plotting. The renderer preserves the selected-plan
+endpoints and abstract units, embeds its fonts, and requires no TeX installation.
